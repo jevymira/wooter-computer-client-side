@@ -1,4 +1,5 @@
-# Client
+# wooter-computer-client-side
+Angular SPA interfacing with the Wooter Computer Web API.
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.3.
 
