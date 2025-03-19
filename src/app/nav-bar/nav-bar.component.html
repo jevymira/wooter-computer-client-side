@@ -1,3 +1,11 @@
-<a [routerLink]="['/weather']">Weather</a>
-<a [routerLink]="['/desktops']">Desktops</a>
-<a [routerLink]="['/laptops']">Laptops</a>
+<header>
+    <mat-toolbar color="primary">
+        <button mat-icon-button [routerLink]="['/']">
+          <mat-icon>home</mat-icon>
+        </button>
+  
+        <a mat-flat-button color="primary" [routerLink]="['/desktops']">Desktops</a>
+        <a mat-flat-button color="primary" [routerLink]="['/laptops']">Laptops</a>
+        <span class="separator"></span>
+    </mat-toolbar>
+  </header>
