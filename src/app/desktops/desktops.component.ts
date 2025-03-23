@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Offer } from '../offer';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment.development';
 
 @Component({
@@ -22,7 +22,8 @@ export class DesktopsComponent implements OnInit {
   }
 
   getOffers() {
-    this.http.get<Offer[]>(`${environment.baseUrl}api/offers`).subscribe
+    const params = new HttpParams().set(`category`, `Desktops`);
+    this.http.get<Offer[]>(`${environment.baseUrl}api/offers`, {params}).subscribe
     (
       {
         next: result => this.offers = result,
