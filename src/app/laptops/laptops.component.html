@@ -1,1 +1,24 @@
-<p>laptops works!</p>
+<h1>Offers</h1>
+
+ @if (offers) {
+   <table class='table table-striped' aria-labelledby="tableLabel">
+     <thead>
+       <tr>
+         <th>ID</th>
+         <th>Title</th>
+         <th>URL</th>
+       </tr>
+     </thead>
+     <tbody>
+       @for (offer of offers; track offer.id) {
+         <tr ngFor="let offer of offers">
+           <td><a [routerLink]="['/offers', offer.id]">{{ offer.id }}</a></td>
+           <td>{{ offer.title }}</td>
+           <td>{{ offer.url }}</td>
+         </tr>  
+       }
+     </tbody>
+   </table>
+ } @else {
+   <p><em>Loading...</em></p>
+ }
