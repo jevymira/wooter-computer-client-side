@@ -17,7 +17,8 @@ import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
   ],
   templateUrl: './side-bar.component.html',
   styleUrl: './side-bar.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  // FIXME: prevents DesktopsComponent initialization
+  // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SideBarComponent {
   private readonly _formBuilder = inject(FormBuilder);
