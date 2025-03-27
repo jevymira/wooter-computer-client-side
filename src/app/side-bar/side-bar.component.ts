@@ -24,8 +24,8 @@ export class SideBarComponent {
   private readonly _formBuilder = inject(FormBuilder);
 
   readonly _memory = this._formBuilder.group({
-    8: false,
-    16: false,
-    32: false
+    has8: false,
+    has16: false,
+    has32: false
   });
 }

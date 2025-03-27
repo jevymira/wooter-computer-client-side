@@ -1,8 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, Signal, effect, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Offer } from '../offer';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment.development';
+import { ROUTER_OUTLET_DATA } from '@angular/router';
+import { AbstractControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-desktops',
@@ -10,12 +12,17 @@ import { environment } from '../../environments/environment.development';
     RouterLink
   ],
   templateUrl: './desktops.component.html',
-  styleUrl: './desktops.component.scss'
+  styleUrl: './desktops.component.scss',
 })
 export class DesktopsComponent implements OnInit {
+  readonly _memory = inject(ROUTER_OUTLET_DATA) as Signal<AbstractControl>;
   public offers: Offer[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    effect(() => {
+      console.log(this._memory());
+    });
+  }
 
   ngOnInit() {
     this.getOffers();
