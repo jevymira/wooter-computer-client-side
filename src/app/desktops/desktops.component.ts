@@ -1,5 +1,5 @@
 import { Component, OnInit, Signal, effect, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Offer } from '../offer';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment.development';
@@ -19,9 +19,13 @@ export class DesktopsComponent implements OnInit {
   public offers: Offer[] = [];
   // param = new HttpParams().set('category', 'Desktops');
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private activatedRoute: ActivatedRoute) {
     effect(() => {
-      let params = new HttpParams().set('category', 'Desktops')
+      let category = this.activatedRoute.snapshot.paramMap.get('category') || '';
+      let params = new HttpParams();
+      if (category != '') {
+        params = new HttpParams().set('category', category)
+      }
 
       // FIXME: Scope out a more extensible way of handling
       // FormGroup value changes.
@@ -48,7 +52,16 @@ export class DesktopsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getOffers(new HttpParams().set('category', 'Desktops'));
+    // Reinitialize component switching between e.g., Desktops and Laptops
+    this.activatedRoute.params.subscribe(p => {
+      // `|| ...` defines default strin
+      let category = this.activatedRoute.snapshot.paramMap.get('category') || '';
+      let params = new HttpParams();
+      if (category != '') {
+        params = new HttpParams().set('category', category)
+      }
+      this.getOffers(params);
+    })
   }
 
   getOffers(params: HttpParams) {
