@@ -12,7 +12,7 @@
      <tbody>
        @for (offer of offers; track offer.id) {
          <tr ngFor="let offer of offers">
-           <td><a [routerLink]="['/offer-items', offer.id]">{{ offer.id }}</a></td>
+           <td><a [routerLink]="['/offers', offer.id]">{{ offer.id }}</a></td>
            <td>{{ offer.title }}</td>
            <td>{{ offer.url }}</td>
          </tr>  

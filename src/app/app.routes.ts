@@ -6,6 +6,6 @@ import { OffersComponent } from './offers/offers.component';
 export const routes: Routes = [
     { path: "navbar", component: NavBarComponent },
     { path: "offers", component: OffersComponent },
-    { path: "offer-items/:id", component: OfferItemComponent},
+    { path: "offers/:id", component: OfferItemComponent},
     { path: "", component: OffersComponent, pathMatch: "full" }
 ];
