@@ -39,14 +39,6 @@ export class DesktopsComponent implements OnInit {
         params = params.append('memory', '32');
       }
 
-      // When no filter is selected, 
-      // default to retrieving all offer items.
-      if (!(params.has('memory'))) {
-        params = params.append('memory', '8');
-        params = params.append('memory', '16');
-        params = params.append('memory', '32');
-      }
-
       this.getOffers(params);
     });
   }
