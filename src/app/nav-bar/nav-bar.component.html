@@ -4,8 +4,8 @@
           <mat-icon>home</mat-icon>
         </button>
   
-        <a mat-flat-button color="primary" [routerLink]="['/desktops']">Desktops</a>
-        <a mat-flat-button color="primary" [routerLink]="['/laptops']">Laptops</a>
+        <a mat-flat-button color="primary" [routerLink]="['/offers']" [queryParams]="{ category: 'Desktops' }">Desktops</a>
+        <a mat-flat-button color="primary" [routerLink]="['/offers']" [queryParams]="{ category: 'Laptops' }">Laptops</a>
         <span class="separator"></span>
     </mat-toolbar>
   </header>
