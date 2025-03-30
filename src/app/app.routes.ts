@@ -9,7 +9,7 @@ export const routes: Routes = [
     { path: "desktops/:category", component: DesktopsComponent },
     { path: "laptops", component: LaptopsComponent },
     { path: "navbar", component: NavBarComponent },
-    { path: "offers/:category", component: OffersComponent },
+    { path: "offers", component: OffersComponent },
     { path: "offer-items/:id", component: OfferItemComponent},
     { path: "", component: OffersComponent, pathMatch: "full" }
 ];

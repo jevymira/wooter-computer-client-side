@@ -13,10 +13,11 @@ import { environment } from '../../environments/environment.development';
 export class OffersComponent implements OnInit {
   readonly _memory = inject(ROUTER_OUTLET_DATA) as Signal<Partial<{ has8: boolean | null; has16: boolean | null; has32: boolean | null; }>>;
   public offers: Offer[] = [];
+  category: string = '';
 
   constructor(private http: HttpClient, private activatedRoute: ActivatedRoute) {
     effect(() => {
-      let category = this.activatedRoute.snapshot.paramMap.get('category') || '';
+      let category = this.category;
       let params = new HttpParams();
       if (category != '') {
         params = new HttpParams().set('category', category)
@@ -39,16 +40,10 @@ export class OffersComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Reinitialize component switching between e.g., Desktops and Laptops
-    this.activatedRoute.params.subscribe(p => {
-      // `|| ...` defines default strin
-      let category = this.activatedRoute.snapshot.paramMap.get('category') || '';
-      let params = new HttpParams();
-      if (category != '') {
-        params = new HttpParams().set('category', category)
-      }
-      this.getOffers(params);
-    })
+    this.activatedRoute.queryParams.subscribe(params => {
+      this.category = params['category'] || '';
+      this.getOffers(params = new HttpParams().set('category', this.category));
+    });
   }
 
   getOffers(params: HttpParams) {
