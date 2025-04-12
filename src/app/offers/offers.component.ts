@@ -1,12 +1,13 @@
-import { Component, effect, inject, OnInit, Signal } from '@angular/core';
+import { Component, effect, inject, OnInit, Signal, ViewChild } from '@angular/core';
 import { ActivatedRoute, ROUTER_OUTLET_DATA, RouterLink } from '@angular/router';
 import { Offer } from '../offer';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment.development';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { CommonModule } from '@angular/common';
+import { PaginationStateService } from '../pagination-state.service';
 
 @Component({
   selector: 'app-offers',
@@ -28,7 +29,13 @@ export class OffersComponent implements OnInit {
   pageSize: number = 12;
   category: string = '';
 
-  constructor(private http: HttpClient, private activatedRoute: ActivatedRoute) {
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  constructor(
+    private http: HttpClient,
+    private activatedRoute: ActivatedRoute,
+    private paginationService: PaginationStateService)
+  {
     effect(() => {
       let category = this.category;
       let params = new HttpParams();
@@ -59,6 +66,15 @@ export class OffersComponent implements OnInit {
       this.category = params['category'] || '';
       this.getOffers(params = new HttpParams().set('category', this.category));
     });
+  }
+
+  ngAfterViewInit() {
+    this.paginator.page.subscribe(() => {
+      this.paginationService.pageIndex = this.paginator.pageIndex;
+    });
+
+    // Restore paginator state (e.g., when navigated to with "Back" button)
+    this.paginator.pageIndex = this.paginationService.pageIndex;
   }
 
   // Adapted from answer to "How to use angular-material pagination with mat-card?"
