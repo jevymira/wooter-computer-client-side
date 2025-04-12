@@ -10,8 +10,5 @@
  }
  
  <div>
-    <!--FIXME: Static solution, but parent route not always the same.-->
-     <a mat-flat-button color="secondary"
-         [routerLink]="['/offers']" routerLinkActive="router-link-active">Back</a>
- 
+    <button mat-flat-button color="secondary" (click)="goBack()">back</button>
  </div>
