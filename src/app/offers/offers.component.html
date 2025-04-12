@@ -3,7 +3,7 @@
 @if (pagedOffers) {
   <mat-grid-list cols="3">
   @for (offer of pagedOffers; track offer.id) {
-    <mat-grid-tile *ngFor="let offer of pagedOffers">
+    <mat-grid-tile>
       <mat-card>
         <mat-card-title>{{ offer.title }}</mat-card-title>
       </mat-card>
@@ -14,4 +14,4 @@
   <p><em>Loading...</em></p>
 }
 
-<mat-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="[3, 6, 9]" (page)="onPageChange($event)"></mat-paginator>
+<mat-paginator [length]="length" [pageSize]="pageSize" (page)="onPageChange($event)"></mat-paginator>
