@@ -8,7 +8,7 @@
         Adapted from example in Angular Material documentation
         at https://material.angular.io/components/card/examples#card-fancy
       -->
-      <mat-card>
+      <mat-card [routerLink]="['/offers', offer.id]">
         <mat-card-header>
           <mat-card-title>{{ offer.title }}</mat-card-title>
         </mat-card-header>
