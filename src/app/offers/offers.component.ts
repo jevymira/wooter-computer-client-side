@@ -25,7 +25,7 @@ export class OffersComponent implements OnInit {
   public offers: Offer[] = [];
   pagedOffers: Offer[] = [];
   length: number = 0;
-  pageSize: number = 5;
+  pageSize: number = 12;
   category: string = '';
 
   constructor(private http: HttpClient, private activatedRoute: ActivatedRoute) {
@@ -49,7 +49,8 @@ export class OffersComponent implements OnInit {
       }
 
       this.getOffers(params);
-      this.pagedOffers = this.offers.slice(0, 3);
+      this.pagedOffers = this.offers.slice(0, 12);
+      this.length = this.offers.length;
     });
   }
 
@@ -57,8 +58,6 @@ export class OffersComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe(params => {
       this.category = params['category'] || '';
       this.getOffers(params = new HttpParams().set('category', this.category));
-      this.pagedOffers = this.offers.slice(0, 3);
-      this.length = this.offers.length;
     });
   }
 
@@ -78,7 +77,11 @@ export class OffersComponent implements OnInit {
     this.http.get<Offer[]>(`${environment.baseUrl}api/offers`, {params}).subscribe
     (
       {
-        next: result => this.offers = result,
+        next: result => { 
+          this.offers = result;
+          this.pagedOffers = this.offers.slice(0, 12);
+          this.length = this.offers.length;
+        },
         error: error => console.error(error)
       }
     )
