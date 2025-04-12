@@ -4,8 +4,15 @@
   <mat-grid-list cols="3">
   @for (offer of pagedOffers; track offer.id) {
     <mat-grid-tile>
+      <!--
+        Adapted from example in Angular Material documentation
+        at https://material.angular.io/components/card/examples#card-fancy
+      -->
       <mat-card>
-        <mat-card-title>{{ offer.title }}</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{ offer.title }}</mat-card-title>
+        </mat-card-header>
+        <img mat-card-image src="{{offer.photo}}">
       </mat-card>
     </mat-grid-tile>
   }
