@@ -9,10 +9,18 @@
         at https://material.angular.io/components/card/examples#card-fancy
       -->
       <mat-card [routerLink]="['/offers', offer.id]">
+        <img mat-card-image src="{{offer.photo}}">
         <mat-card-header>
           <mat-card-title>{{ offer.title }}</mat-card-title>
         </mat-card-header>
-        <img mat-card-image src="{{offer.photo}}">
+        <mat-card-content>
+          <!--
+            Currency denomination can be safely hard-coded because
+            Woot! does not ship outside of the contiguous 48 United States.
+            See: https://www.woot.com/faq?ref=w_ngf_rp&tab=account-and-ordering
+          -->
+          <p>${{ offer.price }}</p>
+        </mat-card-content>
       </mat-card>
     </mat-grid-tile>
   }
