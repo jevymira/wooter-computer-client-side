@@ -7,5 +7,5 @@ export const routes: Routes = [
     { path: "navbar", component: NavBarComponent },
     { path: "offers", component: OffersComponent },
     { path: "offers/:id", component: OfferItemComponent},
-    { path: "", component: OffersComponent, pathMatch: "full" }
+    { path: "", redirectTo: "offers", pathMatch: "full" }
 ];

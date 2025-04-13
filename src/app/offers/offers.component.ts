@@ -55,6 +55,8 @@ export class OffersComponent implements OnInit {
         params = params.append('memory', '32');
       }
 
+      // Reset pagination state because underlying offer collection changed.
+      this.paginationService.reset();
       this.getOffers(params);
       this.pagedOffers = this.offers.slice(0, 12);
       this.length = this.offers.length;
@@ -63,6 +65,15 @@ export class OffersComponent implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe(params => {
+      // Check for change of category (e.g., when switching between
+      // "Desktops" and "Laptops" navigation bar items)
+      if (this.category != params['category']) {
+        this.paginationService.reset();
+        if (this.paginator != null) // Prevent TypeError (set property of undefined)
+        {
+          this.paginator.pageIndex = this.paginationService.pageIndex;
+        }
+      }
       this.category = params['category'] || '';
       this.getOffers(params = new HttpParams().set('category', this.category));
     });

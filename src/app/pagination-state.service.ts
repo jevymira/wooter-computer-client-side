@@ -5,5 +5,10 @@ import { Injectable } from '@angular/core';
 })
 export class PaginationStateService {
   pageIndex = 0;
+
   constructor() { }
+
+  reset() {
+    this.pageIndex = 0;
+  }
 }
