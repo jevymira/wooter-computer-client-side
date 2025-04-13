@@ -1,24 +1,32 @@
 <h1>Offers</h1>
 
- @if (offers) {
-   <table class='table table-striped' aria-labelledby="tableLabel">
-     <thead>
-       <tr>
-         <th>ID</th>
-         <th>Title</th>
-         <th>URL</th>
-       </tr>
-     </thead>
-     <tbody>
-       @for (offer of offers; track offer.id) {
-         <tr ngFor="let offer of offers">
-           <td><a [routerLink]="['/offers', offer.id]">{{ offer.id }}</a></td>
-           <td>{{ offer.title }}</td>
-           <td>{{ offer.url }}</td>
-         </tr>  
-       }
-     </tbody>
-   </table>
- } @else {
-   <p><em>Loading...</em></p>
- }
+@if (pagedOffers) {
+  <mat-grid-list cols="3">
+  @for (offer of pagedOffers; track offer.id) {
+    <mat-grid-tile>
+      <!--
+        Adapted from example in Angular Material documentation
+        at https://material.angular.io/components/card/examples#card-fancy
+      -->
+      <mat-card [routerLink]="['/offers', offer.id]">
+        <img mat-card-image src="{{offer.photo}}">
+        <mat-card-header>
+          <mat-card-title>{{ offer.title }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <!--
+            Currency denomination can be safely hard-coded because
+            Woot! does not ship outside of the contiguous 48 United States.
+            See: https://www.woot.com/faq?ref=w_ngf_rp&tab=account-and-ordering
+          -->
+          <p>${{ offer.price }}</p>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+  }
+  </mat-grid-list>
+} @else {
+  <p><em>Loading...</em></p>
+}
+
+<mat-paginator [length]="length" [pageSize]="pageSize" (page)="onPageChange($event)"></mat-paginator>
