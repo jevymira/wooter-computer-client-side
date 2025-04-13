@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -16,12 +16,26 @@ import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
   // FIXME: prevents DesktopsComponent initialization
   // changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SideBarComponent {
-  private readonly _formBuilder = inject(FormBuilder);
+export class SideBarComponent implements OnInit {
+  @Output() selectedMemoryChanged = new EventEmitter<number[]>();
+  private readonly formBuilder = inject(FormBuilder);
 
-  readonly _memory = this._formBuilder.group({
-    has8: false,
-    has16: false,
-    has32: false
+  // https://material.angular.io/components/checkbox/examples#checkbox-reactive-forms
+  readonly memory = this.formBuilder.group({
+    8: false,
+    16: false,
+    32: false
   });
+
+  ngOnInit(): void {
+    this.memory.valueChanges.subscribe(() => {
+      this.selectedMemoryChanged.emit(this.selectedMemory);
+    });
+  }
+
+  get selectedMemory(): number[] {
+    return Object.entries(this.memory.value)
+      .filter(([key, value]) => value) // is true
+      .map(([key]) => Number.parseInt(key));
+  }
 }

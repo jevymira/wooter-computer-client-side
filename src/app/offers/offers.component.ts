@@ -25,7 +25,6 @@ import { SideBarComponent } from '../side-bar/side-bar.component';
   styleUrl: './offers.component.scss'
 })
 export class OffersComponent implements OnInit {
-  readonly _memory = inject(ROUTER_OUTLET_DATA) as Signal<Partial<{ has8: boolean | null; has16: boolean | null; has32: boolean | null; }>>;
   public offers: Offer[] = [];
   pagedOffers: Offer[] = [];
   length: number = 0;
@@ -37,48 +36,7 @@ export class OffersComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private activatedRoute: ActivatedRoute,
-    private router: Router)
-  {
-    // Bypass the single-run minimum of the effect operation
-    // (from https://angular.dev/guide/signals#effects),
-    // which otherwise interferes with a return to the page index
-    // when pressing "back" on the offer-item component.
-    let initialRun = true;
-    
-    effect(() => {
-
-      let category = this.category;
-      let params = new HttpParams();
-      if (category != '') {
-        params = new HttpParams().set('category', category)
-      }
-  
-      // FIXME: Scope out a more extensible way of handling
-      // FormGroup value changes.
-      if (this._memory().has8) {
-        params = params.append('memory', '8');
-      }
-      if (this._memory().has16) {
-        params = params.append('memory', '16');
-      }
-      if (this._memory().has32) {
-        params = params.append('memory', '32');
-      }
-  
-      this.getOffers(params);
-      
-      this.pagedOffers = this.offers.slice(0, 12);
-      this.length = this.offers.length;
-      if (!initialRun) {
-        this.router.navigate([], {
-          relativeTo: this.activatedRoute,
-          queryParams: { page: 0 },
-          queryParamsHandling: 'merge',
-        });
-      }
-      initialRun = false;
-    });
-  }
+    private router: Router) {}
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe(params => {
@@ -102,6 +60,23 @@ export class OffersComponent implements OnInit {
       queryParams: { page: event.pageIndex }, // update query param
       queryParamsHandling: 'merge',
     });
+  }
+
+  // Append parameters for memory in the request, then paginate the response.
+  onMemoryChange(memory: number[]) {
+    let params = new HttpParams();
+  
+      memory.forEach(selected => params = params.append('memory', selected));
+
+      this.getOffers(params);
+      
+      this.pagedOffers = this.offers.slice(0, 12);
+      this.length = this.offers.length;
+      this.router.navigate([], {
+        relativeTo: this.activatedRoute,
+        queryParams: { page: 0 },
+        queryParamsHandling: 'merge',
+      });
   }
 
   getOffers(params: HttpParams) {

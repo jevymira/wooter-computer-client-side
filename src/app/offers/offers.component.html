@@ -1,7 +1,7 @@
 <mat-drawer-container> <!-- Component controls drawer open/close. -->
   <!-- Non-navigation, hence drawer rather than side-nav. -->
   <mat-drawer mode="side" opened>
-    <app-side-bar></app-side-bar>
+    <app-side-bar (selectedMemoryChanged)="onMemoryChange($event)"></app-side-bar>
   </mat-drawer>
   <mat-drawer-content>
     <h2>Offers</h2>
@@ -14,7 +14,7 @@
             at https://material.angular.io/components/card/examples#card-fancy
           -->
           <mat-card [routerLink]="['/offers', offer.id]">
-            <img mat-card-image src="{{offer.photo}}">
+            <img mat-card-image src="{{ offer.photo }}">
             <mat-card-header>
               <mat-card-title>{{ offer.title }}</mat-card-title>
             </mat-card-header>
