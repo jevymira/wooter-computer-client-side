@@ -1,32 +1,39 @@
-<h1>Offers</h1>
-
-@if (pagedOffers) {
-  <mat-grid-list cols="3">
-  @for (offer of pagedOffers; track offer.id) {
-    <mat-grid-tile>
-      <!--
-        Adapted from example in Angular Material documentation
-        at https://material.angular.io/components/card/examples#card-fancy
-      -->
-      <mat-card [routerLink]="['/offers', offer.id]">
-        <img mat-card-image src="{{offer.photo}}">
-        <mat-card-header>
-          <mat-card-title>{{ offer.title }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
+<mat-drawer-container> <!-- Component controls drawer open/close. -->
+  <!-- Non-navigation, hence drawer rather than side-nav. -->
+  <mat-drawer mode="side" opened>
+    <app-side-bar></app-side-bar>
+  </mat-drawer>
+  <mat-drawer-content>
+    <h2>Offers</h2>
+    @if (pagedOffers) {
+      <mat-grid-list cols="3">
+      @for (offer of pagedOffers; track offer.id) {
+        <mat-grid-tile>
           <!--
-            Currency denomination can be safely hard-coded because
-            Woot! does not ship outside of the contiguous 48 United States.
-            See: https://www.woot.com/faq?ref=w_ngf_rp&tab=account-and-ordering
+            Adapted from example in Angular Material documentation
+            at https://material.angular.io/components/card/examples#card-fancy
           -->
-          <p>${{ offer.price }}</p>
-        </mat-card-content>
-      </mat-card>
-    </mat-grid-tile>
-  }
-  </mat-grid-list>
-} @else {
-  <p><em>Loading...</em></p>
-}
-
-<mat-paginator [length]="length" [pageSize]="pageSize" (page)="onPageChange($event)"></mat-paginator>
+          <mat-card [routerLink]="['/offers', offer.id]">
+            <img mat-card-image src="{{offer.photo}}">
+            <mat-card-header>
+              <mat-card-title>{{ offer.title }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <!--
+                Currency denomination can be safely hard-coded because
+                Woot! does not ship outside of the contiguous 48 United States.
+                See: https://www.woot.com/faq?ref=w_ngf_rp&tab=account-and-ordering
+              -->
+              <p>${{ offer.price }}</p>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+      }
+      </mat-grid-list>
+    } @else {
+      <p><em>Loading...</em></p>
+    }
+    <mat-paginator [length]="length" [pageSize]="pageSize" (page)="onPageChange($event)">
+    </mat-paginator>
+  </mat-drawer-content>
+</mat-drawer-container>

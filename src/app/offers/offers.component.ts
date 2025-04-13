@@ -7,11 +7,15 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { CommonModule } from '@angular/common';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { SideBarComponent } from '../side-bar/side-bar.component';
 
 @Component({
   selector: 'app-offers',
   imports: [
     RouterLink,
+    MatSidenavModule,
+    SideBarComponent,
     MatGridListModule,
     MatCardModule,
     MatPaginatorModule,
