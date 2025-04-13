@@ -95,8 +95,14 @@ export class OffersComponent implements OnInit {
       {
         next: result => { 
           this.offers = result;
-          this.pagedOffers = this.offers.slice(0, 12);
           this.length = this.offers.length;
+          let startIndex = this.paginator.pageIndex * this.pageSize;
+          let endIndex = startIndex + this.pageSize;
+          this.length = this.offers.length;
+          if (endIndex > this.length) {
+            endIndex = this.length;
+          }
+          this.pagedOffers = this.offers.slice(startIndex, endIndex);
         },
         error: error => console.error(error)
       }
