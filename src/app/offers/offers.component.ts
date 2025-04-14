@@ -30,6 +30,7 @@ export class OffersComponent implements OnInit {
   length: number = 0;
   pageSize: number = 12;
   category: string = '';
+  memory: number[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -41,7 +42,14 @@ export class OffersComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe(params => {
       this.category = params['category'] || '';
-      this.getOffers(params = new HttpParams().set('category', this.category));
+      this.memory = (params['memory']) || [];
+      let page = params['page'] || 0;
+      this.getOffers(params = new HttpParams().set('category', this.category).appendAll({'memory' : this.memory}));
+      this.router.navigate([], {
+        relativeTo: this.activatedRoute,
+        queryParams: { page: page, memory: this.memory },
+        queryParamsHandling: 'merge',
+      });
     });
   }
 
@@ -65,18 +73,20 @@ export class OffersComponent implements OnInit {
   // Append parameters for memory in the request, then paginate the response.
   onMemoryChange(memory: number[]) {
     let params = new HttpParams();
+    this.memory = memory;
   
-      memory.forEach(selected => params = params.append('memory', selected));
+    memory.forEach(selected => params = params.append('memory', selected));
+    // params.appendAll({'memory' : memory});
 
-      this.getOffers(params);
-      
-      this.pagedOffers = this.offers.slice(0, 12);
-      this.length = this.offers.length;
-      this.router.navigate([], {
-        relativeTo: this.activatedRoute,
-        queryParams: { page: 0 },
-        queryParamsHandling: 'merge',
-      });
+    this.getOffers(params);
+    
+    this.pagedOffers = this.offers.slice(0, 12);
+    this.length = this.offers.length;
+    this.router.navigate([], {
+      relativeTo: this.activatedRoute,
+      queryParams: { page: 0, memory: params.getAll('memory') },
+      queryParamsHandling: 'merge',
+    });
   }
 
   getOffers(params: HttpParams) {
