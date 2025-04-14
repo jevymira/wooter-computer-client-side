@@ -50,7 +50,7 @@ export class OffersComponent implements OnInit {
       .appendAll({'memory' : this.memory, 'storage' : this.storage}));
       this.router.navigate([], {
         relativeTo: this.activatedRoute,
-        queryParams: { page: page, memory: this.memory },
+        queryParams: { page: page, memory: this.memory, storage: this.storage },
         queryParamsHandling: 'merge',
       });
     });
@@ -76,15 +76,9 @@ export class OffersComponent implements OnInit {
   // Append parameters for memory in the request, then paginate the response.
   onFiltersChange(filters: {memory: number[]; storage: number[]}) {
     let params = new HttpParams();
-    this.memory = filters.memory;
-    this.storage = filters.storage;
   
-    this.memory.forEach(selected => params = params.append('memory', selected));
-    this.storage.forEach(selected => params = params.append('storage', selected));
-
-    this.getOffers(params);
-    this.pagedOffers = this.offers.slice(0, 12);
-    this.length = this.offers.length;
+    filters.memory.forEach(selected => params = params.append('memory', selected));
+    filters.storage.forEach(selected => params = params.append('storage', selected));
 
     this.router.navigate([], {
       relativeTo: this.activatedRoute,
