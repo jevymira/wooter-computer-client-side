@@ -18,10 +18,10 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
   // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SideBarComponent implements OnInit {
-  @Output() selectedMemoryChanged = new EventEmitter<{memory: number[]}>();
+  @Output() selectedFiltersChanged =
+    new EventEmitter<{memory: number[]; storage: number[]}>();
   private readonly formBuilder = inject(FormBuilder);
-
-  constructor(private activatedRoute: ActivatedRoute) {}
+  private readonly activatedRoute = inject(ActivatedRoute);
 
   // https://material.angular.io/components/checkbox/examples#checkbox-reactive-forms
   readonly filterForm = this.formBuilder.group({
@@ -29,12 +29,20 @@ export class SideBarComponent implements OnInit {
       8: false,
       16: false,
       32: false
+    }),
+    storage: this.formBuilder.group({
+      256: false,
+      512: false,
+      1000: false,
     })
   });
 
   ngOnInit(): void {
-    this.memory.valueChanges.subscribe(() => {
-      this.selectedMemoryChanged.emit({memory: this.selectedMemory});
+    this.filterForm.valueChanges.subscribe(() => {
+      this.selectedFiltersChanged.emit({
+        memory: this.selectedMemory,
+        storage: this.selectedStorage
+      });
     });
     this.activatedRoute.queryParams.subscribe(params => {
       let mem: string[] = (params['memory']) || [];
@@ -48,9 +56,20 @@ export class SideBarComponent implements OnInit {
     return this.filterForm.get('memory') as FormGroup;
   }
 
+  get storage() {
+    return this.filterForm.get('storage') as FormGroup;
+  }
+
   get selectedMemory(): number[] {
     return Object.entries(this.memory.value)
-      .filter(([key, value]) => value) // is true
-      .map(([key]) => Number.parseInt(key));
+      .filter(([option, isChecked]) => isChecked) // is true
+      .map(([checked]) => Number.parseInt(checked));
   }
+
+  get selectedStorage(): number[] {
+    return Object.entries(this.storage.value)
+      .filter(([option, isChecked]) => isChecked)
+      .map(([checked]) => Number.parseInt(checked));
+  }
+
 }

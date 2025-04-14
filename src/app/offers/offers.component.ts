@@ -31,6 +31,7 @@ export class OffersComponent implements OnInit {
   pageSize: number = 12;
   category: string = '';
   memory: number[] = [];
+  storage: number[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -43,8 +44,10 @@ export class OffersComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe(params => {
       this.category = params['category'] || '';
       this.memory = (params['memory']) || [];
+      this.storage = (params['storage']) || [];
       let page = params['page'] || 0;
-      this.getOffers(params = new HttpParams().set('category', this.category).appendAll({'memory' : this.memory}));
+      this.getOffers(params = new HttpParams().set('category', this.category)
+      .appendAll({'memory' : this.memory, 'storage' : this.storage}));
       this.router.navigate([], {
         relativeTo: this.activatedRoute,
         queryParams: { page: page, memory: this.memory },
@@ -71,20 +74,25 @@ export class OffersComponent implements OnInit {
   }
 
   // Append parameters for memory in the request, then paginate the response.
-  onMemoryChange(filters: {memory: number[]}) {
+  onFiltersChange(filters: {memory: number[]; storage: number[]}) {
     let params = new HttpParams();
     this.memory = filters.memory;
+    this.storage = filters.storage;
   
     this.memory.forEach(selected => params = params.append('memory', selected));
-    // params.appendAll({'memory' : memory});
+    this.storage.forEach(selected => params = params.append('storage', selected));
 
     this.getOffers(params);
-    
     this.pagedOffers = this.offers.slice(0, 12);
     this.length = this.offers.length;
+
     this.router.navigate([], {
       relativeTo: this.activatedRoute,
-      queryParams: { page: 0, memory: params.getAll('memory') },
+      queryParams: { 
+        page: 0,
+        memory: params.getAll('memory'),
+        storage: params.getAll('storage'),
+      },
       queryParamsHandling: 'merge',
     });
   }

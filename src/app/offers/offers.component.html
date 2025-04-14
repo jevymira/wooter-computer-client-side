@@ -1,7 +1,7 @@
 <mat-drawer-container> <!-- Component controls drawer open/close. -->
   <!-- Non-navigation, hence drawer rather than side-nav. -->
   <mat-drawer mode="side" opened>
-    <app-side-bar (selectedMemoryChanged)="onMemoryChange($event)"></app-side-bar>
+    <app-side-bar (selectedFiltersChanged)="onFiltersChange($event)"></app-side-bar>
   </mat-drawer>
   <mat-drawer-content>
     <h2>Offers</h2>
