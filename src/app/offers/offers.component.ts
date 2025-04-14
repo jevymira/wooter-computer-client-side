@@ -71,11 +71,11 @@ export class OffersComponent implements OnInit {
   }
 
   // Append parameters for memory in the request, then paginate the response.
-  onMemoryChange(memory: number[]) {
+  onMemoryChange(filters: {memory: number[]}) {
     let params = new HttpParams();
-    this.memory = memory;
+    this.memory = filters.memory;
   
-    memory.forEach(selected => params = params.append('memory', selected));
+    this.memory.forEach(selected => params = params.append('memory', selected));
     // params.appendAll({'memory' : memory});
 
     this.getOffers(params);
