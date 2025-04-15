@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -22,6 +22,7 @@ export class SideBarComponent implements OnInit {
     new EventEmitter<{memory: number[]; storage: number[]}>();
   private readonly formBuilder = inject(FormBuilder);
   private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly changeDetectorRef =  inject(ChangeDetectorRef);
 
   checkedMemory: number[] = [];
   category: string = '';
@@ -81,7 +82,8 @@ export class SideBarComponent implements OnInit {
           { emitEvent: false })); 
       }
     });
-    
+    // Run another detection cycle to avoid ExpressionChangedAfterItHasBeenCheckedError
+    this.changeDetectorRef.detectChanges();
   }
 
   get memory() {
