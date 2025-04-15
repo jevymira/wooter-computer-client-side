@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Offer } from '../offer';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment.development';
@@ -7,9 +7,7 @@ import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-offer-item',
-  imports: [
-    RouterLink
-  ],
+  imports: [],
   templateUrl: './offer-item.component.html',
   styleUrl: './offer-item.component.scss'
 })

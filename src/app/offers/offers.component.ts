@@ -41,8 +41,10 @@ export class OffersComponent implements OnInit {
     private router: Router) {}
 
   ngOnInit() {
+    this.activatedRoute.paramMap.subscribe(params => {
+      this.category = params.get('category') || '';
+    });
     this.activatedRoute.queryParams.subscribe(params => {
-      this.category = params['category'] || '';
       this.memory = (params['memory']) || [];
       this.storage = (params['storage']) || [];
       let page = params['page'] || 0;

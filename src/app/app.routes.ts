@@ -5,7 +5,7 @@ import { OffersComponent } from './offers/offers.component';
 
 export const routes: Routes = [
     { path: "navbar", component: NavBarComponent },
-    { path: "offers", component: OffersComponent },
-    { path: "offers/:id", component: OfferItemComponent},
+    { path: "offers/:category", component: OffersComponent },
+    { path: "offers/:category/:id", component: OfferItemComponent},
     { path: "", redirectTo: "offers", pathMatch: "full" }
 ];
