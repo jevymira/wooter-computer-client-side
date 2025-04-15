@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -23,10 +23,11 @@ export class SideBarComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly activatedRoute = inject(ActivatedRoute);
 
-  // category: string = '';
+  checkedMemory: number[] = [];
+  category: string = '';
 
   // https://material.angular.io/components/checkbox/examples#checkbox-reactive-forms
-  readonly filterForm = this.formBuilder.group({
+  filterForm: FormGroup = this.formBuilder.group({
     memory: this.formBuilder.group({
       8: this.formBuilder.control(false), // define default, for .reset()
       16: this.formBuilder.control(false),
@@ -37,7 +38,7 @@ export class SideBarComponent implements OnInit {
       512: this.formBuilder.control(false),
       1000: this.formBuilder.control(false)
     })
-  });
+ });
 
   ngOnInit(): void {
     this.filterForm.valueChanges.subscribe(() => {
@@ -46,22 +47,41 @@ export class SideBarComponent implements OnInit {
         storage: this.selectedStorage
       });
     });
-    this.activatedRoute.queryParams.subscribe(params => {
-      let mem: string[] = (params['memory']) || [];
-      let stor: string[] = (params['storage']) || [];
-      // restore selections (e.g., when returning from selected offer page)
-      mem.forEach(selected => this.memory.get(selected)!.setValue(true,
-        { emitEvent: false })); // prevents call that reset page to 0
-      stor.forEach(selected => this.storage.get(selected)!.setValue(true,
-        { emitEvent: false }));
-      /*
+    this.activatedRoute.params.subscribe(params => {
+      // Clear selections; e.g., when navigating to
+      // "offers/laptops" away from "offers/desktops".
       if (this.category != params['category']) {
         this.category = params['category'];
         this.filterForm.reset(undefined, { emitEvent: false });
         // undefined: defaults set
       }
-      */
     });
+  }
+
+  ngAfterViewInit() { 
+    this.activatedRoute.queryParams.subscribe(params => {
+      let memoryParams: string[] = (
+        Array.isArray(params['memory']) // edge case: single (non-array) param
+          ? params['memory']   
+          : [params['memory']]
+      );
+      let storageParams: string[] = (
+      Array.isArray(params['storage'])
+        ? params['storage']   
+        : [params['storage']]
+      ); 
+      // restore selections (e.g., when returning from selected offer page)
+      // optional chaining with ? prevents TypeError when form control null/undefined
+      if (memoryParams.length != 0) {
+        memoryParams.forEach(selected => this.memory.get((selected))?.setValue(true,
+          { emitEvent: false })); // prevents call that reset page to 0
+      }
+      if (storageParams.length != 0) { // ERROR TypeError: Cannot read properties of null
+        storageParams.forEach(selected => this.storage.get(selected)?.setValue(true,
+          { emitEvent: false })); 
+      }
+    });
+    
   }
 
   get memory() {
