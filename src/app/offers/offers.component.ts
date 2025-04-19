@@ -9,6 +9,7 @@ import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/p
 import { CommonModule } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { SideBarComponent } from '../side-bar/side-bar.component';
+import { OfferService } from './offer.service';
 
 @Component({
   selector: 'app-offers',
@@ -38,18 +39,26 @@ export class OffersComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private activatedRoute: ActivatedRoute,
-    private router: Router) {}
+    private router: Router,
+    private service: OfferService) {}
 
   ngOnInit() {
     this.activatedRoute.paramMap.subscribe(params => {
       this.category = params.get('category') || '';
     });
     this.activatedRoute.queryParams.subscribe(params => {
-      this.memory = (params['memory']) || [];
-      this.storage = (params['storage']) || [];
+      this.memory = (params['memory']) ?? [];
+      this.storage = (params['storage']) ?? [];
       let page = params['page'] || 0;
-      this.getOffers(params = new HttpParams().set('category', this.category)
-      .appendAll({'memory' : this.memory, 'storage' : this.storage}));
+
+      this.service.get(this.category, this.memory, this.storage, page)
+        .subscribe({
+          next: result => {
+            this.offers = result;
+            this.paginateOffers(this.paginator.pageIndex)
+          }
+        });
+
       this.router.navigate([], {
         relativeTo: this.activatedRoute,
         queryParams: { page: page, memory: this.memory, storage: this.storage },
@@ -91,19 +100,6 @@ export class OffersComponent implements OnInit {
       },
       queryParamsHandling: 'merge',
     });
-  }
-
-  getOffers(params: HttpParams) {
-    this.http.get<Offer[]>(`${environment.baseUrl}api/offers`, {params}).subscribe
-    (
-      {
-        next: result => { 
-          this.offers = result;
-          this.paginateOffers(this.paginator.pageIndex);
-        },
-        error: error => console.error(error)
-      }
-    )
   }
 
   // Adapted from answer to "How to use angular-material pagination with mat-card?"
