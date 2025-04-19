@@ -4,6 +4,7 @@ import { Offer } from '../offer';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment.development';
 import { Location } from '@angular/common';
+import { OfferService } from '../offers/offer.service';
 
 @Component({
   selector: 'app-offer-item',
@@ -17,11 +18,12 @@ export class OfferItemComponent {
   constructor(
     private http: HttpClient,
     private activatedRoute: ActivatedRoute,
+    private service: OfferService,
     private location: Location) {}
 
   ngOnInit() {
-    let id = this.activatedRoute.snapshot.paramMap.get("id");
-    this.http.get<Offer>(`${environment.baseUrl}api/Offers/${id}`).subscribe(
+    this.service.getOffer(this.activatedRoute.snapshot.paramMap.get("id") || '')
+      .subscribe(
       {
         next: result => this.offer = result,
         error: error => console.error(error)

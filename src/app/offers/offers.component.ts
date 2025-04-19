@@ -51,7 +51,7 @@ export class OffersComponent implements OnInit {
       this.storage = (params['storage']) ?? [];
       let page = params['page'] || 0;
 
-      this.service.get(this.category, this.memory, this.storage, page)
+      this.service.getOffers(this.category, this.memory, this.storage, page)
         .subscribe({
           next: result => {
             this.offers = result;

@@ -11,7 +11,7 @@ export class OfferService {
 
   constructor(private http: HttpClient) { }
 
-  get(
+  getOffers(
     category: string = '',
     memory: number[] | [],
     storage: number[] | [],
@@ -31,5 +31,9 @@ export class OfferService {
     });
 
     return this.http.get<Offer[]>(url, { params })
+  }
+
+  getOffer(id: string): Observable<Offer> {
+    return this.http.get<Offer>(`${environment.baseUrl}api/offers/${id}`);
   }
 }
