@@ -22,13 +22,21 @@ export class OfferService {
       .set('category', category)
       .set('page', page);
 
-    memory.forEach(m => {
-      params = params.append('memory', m);
-    });
+    if (Array.isArray(memory)) {
+      memory.forEach(m => {
+        params = params.append('memory', m);
+      });
+    } else {
+      params = params.set('memory', memory)
+    }
 
-    storage.forEach(s => {
-      params = params.append('storage', s);
-    });
+    if (Array.isArray(storage)) {
+      storage.forEach(s => {
+        params = params.append('storage', s);
+      });
+    } else {
+      params = params.set('storage', storage)
+    }
 
     return this.http.get<Offer[]>(url, { params })
   }

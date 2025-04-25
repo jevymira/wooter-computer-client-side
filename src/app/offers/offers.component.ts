@@ -47,8 +47,8 @@ export class OffersComponent implements OnInit {
       this.category = params.get('category') || '';
     });
     this.activatedRoute.queryParams.subscribe(params => {
-      this.memory = (params['memory']) ?? [];
-      this.storage = (params['storage']) ?? [];
+      this.memory = ((params['memory'])) || [];
+      this.storage = ((params['storage'])) || [];
       let page = params['page'] || 0;
 
       this.service.getOffers(this.category, this.memory, this.storage, page)
