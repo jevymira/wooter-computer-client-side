@@ -29,5 +29,8 @@ export class AuthService {
       }));
   }
 
-  logout(): void { }
+  logout(): void {
+    localStorage.removeItem('computer_comparator_jwt');
+    this.setAuthStatus(false);
+  }
 }
