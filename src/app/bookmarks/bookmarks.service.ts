@@ -11,6 +11,8 @@ export class BookmarksService {
 
   constructor(private http: HttpClient) { }
 
+  // Gets bookmark(s) for currently authenticated user;
+  // optionally filters for a specific offer-item.
   getBookmarks(offerItemId: number | null): Observable<Bookmark[]> {
     let url = `${environment.baseUrl}api/bookmarks`;
     let params = new HttpParams();
@@ -20,6 +22,8 @@ export class BookmarksService {
     return this.http.get<Bookmark[]>(url, {params});
   }
 
+  // Sends request to create a bookmark for the current user
+  // and a specified offer-item.
   post(offerItemId: number): Observable<Bookmark> {
     let url = `${environment.baseUrl}api/bookmarks`;
     return this.http.post<Bookmark>(url, {}, {
@@ -29,6 +33,8 @@ export class BookmarksService {
     });
   }
 
+  // Sends request to delete a bookmark for the current user
+  // and a specified offer-item.
   delete(offerItemId: number): Observable<void> {
     let url = `${environment.baseUrl}api/bookmarks`;
     let params = new HttpParams().set('offerItemId', offerItemId);

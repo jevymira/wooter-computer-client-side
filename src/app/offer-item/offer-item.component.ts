@@ -35,7 +35,7 @@ export class OfferItemComponent {
   ngOnInit() {
     this.offerService.getOffer(this.activatedRoute.snapshot.paramMap.get("id") || '')
       .pipe(
-        concatMap((result) => {
+        concatMap((result) => { // Get offer, first, to determine whether bookmark exists.
           this.offer = result;
           return this.bookmarkService.getBookmarks(result.id)
         })
