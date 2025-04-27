@@ -11,9 +11,27 @@ export class BookmarksService {
 
   constructor(private http: HttpClient) { }
 
-  getBookmarks(userId: string): Observable<Bookmark[]> {
-    let url = `${environment.baseUrl}api/bookmarks/`;
-    let params = new HttpParams().set('userId', userId);
-    return this.http.get<Bookmark[]>(url, { params });
+  getBookmarks(offerItemId: number | null): Observable<Bookmark[]> {
+    let url = `${environment.baseUrl}api/bookmarks`;
+    let params = new HttpParams();
+    if (offerItemId) {
+      params = params.set('offerItemId', offerItemId);
+    }
+    return this.http.get<Bookmark[]>(url, {params});
+  }
+
+  post(offerItemId: number): Observable<Bookmark> {
+    let url = `${environment.baseUrl}api/bookmarks`;
+    return this.http.post<Bookmark>(url, {}, {
+      params: {
+        offerItemId: offerItemId
+      }
+    });
+  }
+
+  delete(offerItemId: number): Observable<void> {
+    let url = `${environment.baseUrl}api/bookmarks`;
+    let params = new HttpParams().set('offerItemId', offerItemId);
+    return this.http.delete<void>(url, {params});
   }
 }

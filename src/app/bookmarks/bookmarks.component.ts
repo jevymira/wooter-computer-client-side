@@ -21,7 +21,7 @@ export class BookmarksComponent implements OnInit{
   constructor(private service: BookmarksService) { }
 
   ngOnInit(): void {
-    this.service.getBookmarks("1")
+    this.service.getBookmarks(null)
       .subscribe({
         next: result => this.bookmarks = result,
         error: error => console.error(error)
