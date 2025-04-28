@@ -11,4 +11,12 @@
  
  <div>
     <button mat-flat-button color="secondary" (click)="goBack()">back</button>
+    @if (isLoggedIn) {
+      @if (isBookmarked) {
+        <button mat-flat-button color="secondary" (click)="removeBookmark()">Remove Bookmark</button>
+      }
+      @else {
+        <button mat-flat-button color="secondary" (click)="bookmark()">Bookmark</button>
+      }
+    }
  </div>
