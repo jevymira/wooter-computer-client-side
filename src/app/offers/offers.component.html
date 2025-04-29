@@ -13,7 +13,7 @@
             Adapted from example in Angular Material documentation
             at https://material.angular.io/components/card/examples#card-fancy
           -->
-          <mat-card [routerLink]="['/offers', offer.category, offer.id]">
+          <mat-card [routerLink]="['/offers', offer.category.toLowerCase(), offer.id]">
             <img mat-card-image src="{{ offer.photo }}">
             <mat-card-header>
               <mat-card-title>{{ offer.title }}</mat-card-title>
