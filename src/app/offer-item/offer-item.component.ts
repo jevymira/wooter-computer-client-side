@@ -6,8 +6,9 @@ import { environment } from '../../environments/environment.development';
 import { Location } from '@angular/common';
 import { OfferService } from '../offers/offer.service';
 import { AuthService } from '../auth/auth.service';
-import { concatMap, Subject, takeUntil } from 'rxjs';
+import { concatMap, EMPTY, Observable, Subject, takeUntil } from 'rxjs';
 import { BookmarksService } from '../bookmarks/bookmarks.service';
+import { Bookmark } from '../bookmarks/bookmark';
 
 @Component({
   selector: 'app-offer-item',
@@ -34,12 +35,17 @@ export class OfferItemComponent {
 
   ngOnInit() {
     this.offerService.getOffer(this.activatedRoute.snapshot.paramMap.get("id") || '')
-      .pipe(
-        concatMap((result) => { // Get offer, first, to determine whether bookmark exists.
-          this.offer = result;
+    .pipe(
+      concatMap((result) => { // Get offer, first, to determine whether bookmark exists.
+        this.offer = result;
+        if (this.isLoggedIn) {
           return this.bookmarkService.getBookmarks(result.id)
-        })
-      ).subscribe(result => this.isBookmarked = (result.length != 0));
+        }
+        else {
+          return EMPTY // Prevent 401 Unauthorized error.
+        }
+      })
+    ).subscribe(result => this.isBookmarked = (result.length != 0));
   }
 
   ngOnDestroy() {
