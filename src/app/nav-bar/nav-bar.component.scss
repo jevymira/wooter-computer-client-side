@@ -4,6 +4,7 @@
 
 mat-toolbar {
   background-color: var(--mat-sys-primary-container);
+  gap: 16px;
 }
 
 mat-icon {
@@ -12,7 +13,6 @@ mat-icon {
 }
 
 a {
-  margin-left: 1em;
   text-decoration: none;
   color: var(--mat-sys-on-primary-container);
   white-space: normal;
