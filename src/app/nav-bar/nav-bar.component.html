@@ -1,8 +1,8 @@
 <header>
     <mat-toolbar>
-        <button mat-icon-button [routerLink]="['/']">
-          <mat-icon>home</mat-icon>
-        </button>
+        <a [routerLink]="['/']">
+          <mat-icon fontIcon="home"></mat-icon>
+        </a>
   
         <a mat-flat-button color="primary" [routerLink]="['/offers', 'desktops']" [queryParams]="{page: 0}">Desktops</a>
         <a mat-flat-button color="primary" [routerLink]="['/offers', 'laptops']" [queryParams]="{page: 0}">Laptops</a>

@@ -6,10 +6,15 @@ mat-toolbar {
   background-color: var(--mat-sys-primary-container);
 }
 
+mat-icon {
+  transform: scale(1.25);
+  margin-top: 5px;
+}
+
 a {
   margin-left: 1em;
   text-decoration: none;
-  color: var(--mat-sys-on-surface);
+  color: var(--mat-sys-on-primary-container);
   white-space: normal;
   text-align: center;
   word-break: break-all;
