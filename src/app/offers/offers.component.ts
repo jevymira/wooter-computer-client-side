@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { SideBarComponent } from '../side-bar/side-bar.component';
 import { OfferService } from './offer.service';
+import { combineLatestWith, map } from 'rxjs';
 
 @Component({
   selector: 'app-offers',
@@ -43,23 +44,31 @@ export class OffersComponent implements OnInit {
     private service: OfferService) {}
 
   ngOnInit() {
-    this.activatedRoute.paramMap.subscribe(params => {
-      this.category = params.get('category') || '';
-    });
-    this.activatedRoute.queryParams.subscribe(params => {
-      this.memory = ((params['memory'])) || [];
-      this.storage = ((params['storage'])) || [];
-      let page = params['page'] || 0;
+    this.activatedRoute.paramMap
+      .pipe( // Combine to prevent multiple calls on category switch.
+        combineLatestWith(this.activatedRoute.queryParamMap),
+        map(([params, queryParams]) => ({
+          category: params.get('category'),
+          memory: queryParams.getAll('memory'),
+          storage: queryParams.getAll('storage'),
+          page: queryParams.get('page')
+        }))
+      )
+      .subscribe(({category, memory, storage, page}) => {
+        this.category = category || '';
+        this.memory = memory.map(Number) || [];
+        this.storage = storage.map(Number) || [];
+        let pg = Number(page) || 0;
 
-      this.service.getOffers(this.category, this.memory, this.storage, page)
+        this.service.getOffers(this.category, this.memory, this.storage, pg)
         .subscribe({
           next: result => {
             this.offers = result;
             this.paginateOffers(this.paginator.pageIndex)
           }
         });
-
-      this.router.navigate([], {
+  
+        this.router.navigate([], {
         relativeTo: this.activatedRoute,
         queryParams: { page: page, memory: this.memory, storage: this.storage },
         queryParamsHandling: 'merge',
