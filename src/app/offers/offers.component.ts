@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { SideBarComponent } from '../side-bar/side-bar.component';
 import { OfferService } from './offer.service';
-import { combineLatestWith, map } from 'rxjs';
+import { combineLatestWith, map, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-offers',
@@ -44,37 +44,35 @@ export class OffersComponent implements OnInit {
     private service: OfferService) {}
 
   ngOnInit() {
-    this.activatedRoute.paramMap
-      .pipe( // Combine to prevent multiple calls on category switch.
-        combineLatestWith(this.activatedRoute.queryParamMap),
-        map(([params, queryParams]) => ({
-          category: params.get('category'),
-          memory: queryParams.getAll('memory'),
-          storage: queryParams.getAll('storage'),
-          page: queryParams.get('page')
-        }))
+    this.activatedRoute.paramMap.pipe( // Combine to prevent multiple calls on category switch.
+      // Initially emitted by [queryParam] in the navigation bar component.html,
+      // allowing changes in either param or queryparam to trigger the service call.
+      combineLatestWith(this.activatedRoute.queryParamMap),
+      map(([params, queryParams]) => ({
+        category: params.get('category'),
+        memory: queryParams.getAll('memory'),
+        storage: queryParams.getAll('storage'),
+        page: queryParams.get('page')
+      })),
+      switchMap(({category, memory, storage, page}) => 
+        this.service.getOffers(category || '', memory.map(Number) || [], storage.map(Number) || [], Number(page) || 0).pipe(
+          map(result => ({category, memory, storage, page, result}))
+        )
       )
-      .subscribe(({category, memory, storage, page}) => {
-        this.category = category || '';
-        this.memory = memory.map(Number) || [];
-        this.storage = storage.map(Number) || [];
-        let pg = Number(page) || 0;
+    ).subscribe(({category, memory, storage, page, result}) => {
+      this.offers = result;
+      this.paginateOffers(this.paginator.pageIndex);
+      this.category = category || '';
+      this.memory = memory.map(Number) || [];
+      this.storage = storage.map(Number) || [];
 
-        this.service.getOffers(this.category, this.memory, this.storage, pg)
-        .subscribe({
-          next: result => {
-            this.offers = result;
-            this.paginateOffers(this.paginator.pageIndex)
-          }
-        });
-  
-        this.router.navigate([], {
-        relativeTo: this.activatedRoute,
-        queryParams: { page: page, memory: this.memory, storage: this.storage },
-        queryParamsHandling: 'merge',
-      });
+      this.router.navigate([], {
+      relativeTo: this.activatedRoute,
+      queryParams: { page: page, memory: this.memory, storage: this.storage },
+      queryParamsHandling: 'merge',
     });
-  }
+  });
+}
 
   // Called when navigated to with, e.g., offer-item-component "Back" button.
   ngAfterViewInit() {
