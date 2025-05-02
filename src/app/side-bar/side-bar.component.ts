@@ -48,14 +48,14 @@ export class SideBarComponent implements OnInit {
         storage: this.selectedStorage
       });
     });
-    this.activatedRoute.params.subscribe(params => {
+    // queryParams instead of params to clear filter
+    // when clicking "Desktops" when already on desktop route
+    this.activatedRoute.queryParams.subscribe(params => {
       // Clear selections; e.g., when navigating to
       // "offers/laptops" away from "offers/desktops".
-      if (this.category != params['category']) {
-        this.category = params['category'];
-        this.filterForm.reset(undefined, { emitEvent: false });
-        // undefined: defaults set
-      }
+      this.category = params['category'];
+      this.filterForm.reset(undefined, { emitEvent: false });
+      // undefined: defaults set
     });
   }
 
