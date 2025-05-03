@@ -14,6 +14,11 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
+  isAuthenticated(): boolean {
+    // NOTE: not fully reliable, as token expires.
+    return localStorage.getItem('computer_comparator_jwt') != null;
+  }
+
   private setAuthStatus(value: boolean): void {
     this._authStatus.next(value);
   }

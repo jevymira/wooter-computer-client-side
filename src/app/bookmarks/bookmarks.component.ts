@@ -32,6 +32,8 @@ export class BookmarksComponent implements OnInit{
   }
 
   ngOnInit(): void {
+    this.isLoggedIn = this.authService.isAuthenticated();
+
     this.service.getBookmarks(null)
       .pipe(takeUntil(this.destroySubject))
       .subscribe({
