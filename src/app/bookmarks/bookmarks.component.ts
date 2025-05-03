@@ -32,15 +32,12 @@ export class BookmarksComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    if (this.isLoggedIn) {
-      this.service.getBookmarks(null)
-        .subscribe({
-          next: result => this.bookmarks = result,
-          error: error => console.error(error)
-        });
-    } else {
-      this.router.navigate(['/login']);
-    }
+    this.service.getBookmarks(null)
+      .pipe(takeUntil(this.destroySubject))
+      .subscribe({
+        next: result => this.bookmarks = result,
+        error: error => console.error(error)
+      });
   }
 
   ngOnDestroy() {
