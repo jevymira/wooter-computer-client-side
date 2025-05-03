@@ -1,8 +1,9 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-side-bar',
@@ -17,7 +18,8 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
   // FIXME: prevents DesktopsComponent initialization
   // changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SideBarComponent implements OnInit {
+export class SideBarComponent implements OnInit, OnDestroy {
+  private destroyedSubject = new Subject();
   @Output() selectedFiltersChanged =
     new EventEmitter<{memory: number[]; storage: number[]}>();
   private readonly formBuilder = inject(FormBuilder);
@@ -42,12 +44,15 @@ export class SideBarComponent implements OnInit {
  });
 
   ngOnInit(): void {
-    this.filterForm.valueChanges.subscribe(() => {
-      this.selectedFiltersChanged.emit({
-        memory: this.selectedMemory,
-        storage: this.selectedStorage
-      });
-    });
+    this.filterForm.valueChanges
+      .pipe(takeUntil(this.destroyedSubject))
+      .subscribe(() => {
+        this.selectedFiltersChanged.emit({
+          memory: this.selectedMemory,
+          storage: this.selectedStorage
+        });
+      }
+    );
     // queryParams instead of params to clear filter
     // when clicking "Desktops" when already on desktop route
     this.activatedRoute.queryParams.subscribe(params => {
@@ -60,30 +65,38 @@ export class SideBarComponent implements OnInit {
   }
 
   ngAfterViewInit() { 
-    this.activatedRoute.queryParams.subscribe(params => {
-      let memoryParams: string[] = (
-        Array.isArray(params['memory']) // edge case: single (non-array) param
-          ? params['memory']   
-          : [params['memory']]
-      );
-      let storageParams: string[] = (
-      Array.isArray(params['storage'])
-        ? params['storage']   
-        : [params['storage']]
-      ); 
-      // restore selections (e.g., when returning from selected offer page)
-      // optional chaining with ? prevents TypeError when form control null/undefined
-      if (memoryParams.length != 0) {
-        memoryParams.forEach(selected => this.memory.get((selected))?.setValue(true,
-          { emitEvent: false })); // prevents call that reset page to 0
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.destroyedSubject))
+      .subscribe(params => {
+        let memoryParams: string[] = (
+          Array.isArray(params['memory']) // edge case: single (non-array) param
+            ? params['memory']   
+            : [params['memory']]
+        );
+        let storageParams: string[] = (
+        Array.isArray(params['storage'])
+          ? params['storage']   
+          : [params['storage']]
+        ); 
+        // restore selections (e.g., when returning from selected offer page)
+        // optional chaining with ? prevents TypeError when form control null/undefined
+        if (memoryParams.length != 0) {
+          memoryParams.forEach(selected => this.memory.get((selected))?.setValue(true,
+            { emitEvent: false })); // prevents call that reset page to 0
+        }
+        if (storageParams.length != 0) { // ERROR TypeError: Cannot read properties of null
+          storageParams.forEach(selected => this.storage.get(selected)?.setValue(true,
+            { emitEvent: false })); 
+        }
       }
-      if (storageParams.length != 0) { // ERROR TypeError: Cannot read properties of null
-        storageParams.forEach(selected => this.storage.get(selected)?.setValue(true,
-          { emitEvent: false })); 
-      }
-    });
+    );
     // Run another detection cycle to avoid ExpressionChangedAfterItHasBeenCheckedError
     this.changeDetectorRef.detectChanges();
+  }
+
+  ngOnDestroy(): void {
+    this.destroyedSubject.next(true);
+    this.destroyedSubject.complete();
   }
 
   get memory() {
@@ -105,5 +118,4 @@ export class SideBarComponent implements OnInit {
       .filter(([option, isChecked]) => isChecked)
       .map(([checked]) => Number.parseInt(checked));
   }
-
 }
