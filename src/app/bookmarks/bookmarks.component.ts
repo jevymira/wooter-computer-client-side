@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BookmarksService } from './bookmarks.service';
 import { Bookmark } from './bookmark';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -17,18 +17,17 @@ import { Subject, takeUntil } from 'rxjs';
   templateUrl: './bookmarks.component.html',
   styleUrl: './bookmarks.component.scss'
 })
-export class BookmarksComponent implements OnInit{
+export class BookmarksComponent implements OnInit, OnDestroy {
   private destroySubject = new Subject();
   isLoggedIn: boolean = false;
   bookmarks: Bookmark[] = [];
 
   constructor(
     private authService: AuthService,
-    private service: BookmarksService,
-    private router: Router) {
-    authService.authStatus.pipe(takeUntil(this.destroySubject)).subscribe(
-      result => this.isLoggedIn = result
-    )
+    private service: BookmarksService) {
+    authService.authStatus
+      .pipe(takeUntil(this.destroySubject))
+      .subscribe(result => this.isLoggedIn = result)
   }
 
   ngOnInit(): void {
@@ -39,10 +38,11 @@ export class BookmarksComponent implements OnInit{
       .subscribe({
         next: result => this.bookmarks = result,
         error: error => console.error(error)
-      });
+      }
+    );
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroySubject.next(true);
     this.destroySubject.complete();
   }

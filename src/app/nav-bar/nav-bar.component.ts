@@ -20,9 +20,9 @@ import { Subject, takeUntil } from 'rxjs';
   isLoggedIn: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) {
-    authService.authStatus.pipe(takeUntil(this.destroySubject)).subscribe(
-      result => this.isLoggedIn = result
-    )
+    authService.authStatus
+    .pipe(takeUntil(this.destroySubject))
+    .subscribe(result => this.isLoggedIn = result)
   }
 
   onLogout(): void {

@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnInit, Signal, ViewChild } from '@angular/core';
+import { Component, effect, inject, OnDestroy, OnInit, Signal, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, ROUTER_OUTLET_DATA, RouterLink } from '@angular/router';
 import { Offer } from '../offer';
 import { HttpClient, HttpParams } from '@angular/common/http';
@@ -10,7 +10,8 @@ import { CommonModule } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { SideBarComponent } from '../side-bar/side-bar.component';
 import { OfferService } from './offer.service';
-import { combineLatestWith, map, switchMap } from 'rxjs';
+import { combineLatestWith, map, Subject, switchMap, takeUntil } from 'rxjs';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-offers',
@@ -20,13 +21,15 @@ import { combineLatestWith, map, switchMap } from 'rxjs';
     SideBarComponent,
     MatGridListModule,
     MatCardModule,
+    MatIconModule,
     MatPaginatorModule,
     CommonModule
   ],
   templateUrl: './offers.component.html',
   styleUrl: './offers.component.scss'
 })
-export class OffersComponent implements OnInit {
+export class OffersComponent implements OnInit, OnDestroy {
+  private destroySubject = new Subject();
   public offers: Offer[] = [];
   pagedOffers: Offer[] = [];
   length: number = 0;
@@ -44,42 +47,51 @@ export class OffersComponent implements OnInit {
     private service: OfferService) {}
 
   ngOnInit() {
-    this.activatedRoute.paramMap.pipe( // Combine to prevent multiple calls on category switch.
-      // Initially emitted by [queryParam] in the navigation bar component.html,
-      // allowing changes in either param or queryparam to trigger the service call.
-      combineLatestWith(this.activatedRoute.queryParamMap),
-      map(([params, queryParams]) => ({
-        category: params.get('category'),
-        memory: queryParams.getAll('memory'),
-        storage: queryParams.getAll('storage'),
-        page: queryParams.get('page')
-      })),
-      switchMap(({category, memory, storage, page}) => 
-        this.service.getOffers(category || '', memory.map(Number) || [], storage.map(Number) || [], Number(page) || 0).pipe(
-          map(result => ({category, memory, storage, page, result}))
+    this.activatedRoute.paramMap
+      .pipe(
+        takeUntil(this.destroySubject),
+        // Combine to prevent multiple calls on category switch.
+        // Initially emitted by [queryParam] in the navigation bar component.html,
+        // allowing changes in either param or queryparam to trigger the service call.
+        combineLatestWith(this.activatedRoute.queryParamMap),
+        map(([params, queryParams]) => ({
+          category: params.get('category'),
+          memory: queryParams.getAll('memory'),
+          storage: queryParams.getAll('storage'),
+          page: queryParams.get('page')
+        })),
+        switchMap(({category, memory, storage, page}) => 
+          this.service.getOffers(category || '', memory.map(Number) || [], storage.map(Number) || [], Number(page) || 0).pipe(
+            map(result => ({category, memory, storage, page, result}))
+          )
         )
       )
-    ).subscribe(({category, memory, storage, page, result}) => {
-      this.offers = result;
-      this.paginateOffers(this.paginator.pageIndex);
-      this.category = category || '';
-      this.memory = memory.map(Number) || [];
-      this.storage = storage.map(Number) || [];
+      .subscribe(({category, memory, storage, page, result}) => {
+        this.offers = result;
+        this.paginateOffers(this.paginator.pageIndex);
+        this.category = category || '';
+        this.memory = memory.map(Number) || [];
+        this.storage = storage.map(Number) || [];
 
-      this.router.navigate([], {
-      relativeTo: this.activatedRoute,
-      queryParams: { page: page, memory: this.memory, storage: this.storage },
-      queryParamsHandling: 'merge',
-    });
-  });
-}
+        this.router.navigate([], {
+          relativeTo: this.activatedRoute,
+          queryParams: { page: page, memory: this.memory, storage: this.storage },
+          queryParamsHandling: 'merge',
+        });
+      });
+  }
 
   // Called when navigated to with, e.g., offer-item-component "Back" button.
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
       let page = params['page'] || 0;
       this.paginator.pageIndex = page;
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroySubject.next(true);
+    this.destroySubject.complete();
   }
 
   onPageChange(event: PageEvent) {
