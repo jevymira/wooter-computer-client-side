@@ -15,3 +15,21 @@ mat-card {
 mat-card img {
     width: 100%;
 }
+
+mat-card-content {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.item:nth-child(1), .item:nth-child(3) {
+    flex: 1 1 8%;
+}
+
+.item:nth-child(2), .item:nth-child(4) {
+    flex: 1 1 32%;
+}
+
+mat-card-content #offer-price {
+    flex: 1 1 100%;
+}

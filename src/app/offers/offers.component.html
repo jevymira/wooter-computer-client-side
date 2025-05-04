@@ -19,12 +19,21 @@
               <mat-card-title>{{ offer.title }}</mat-card-title>
             </mat-card-header>
             <mat-card-content>
+              <mat-icon class="item">memory</mat-icon>
+              <p class="item">{{ offer.memoryCapacity }} GB</p>
+              <mat-icon class="item">storage</mat-icon>
+              @if (offer.storageSize < 1000) {
+                <p class="item">{{ offer.storageSize }} GB</p>
+              }
+              @else {
+                <p class="item">{{ offer.storageSize / 1000 }} TB</p>
+              }
               <!--
                 Currency denomination can be safely hard-coded because
                 Woot! does not ship outside of the contiguous 48 United States.
                 See: https://www.woot.com/faq?ref=w_ngf_rp&tab=account-and-ordering
               -->
-              <p>${{ offer.price }}</p>
+              <p id="offer-price">${{ offer.price }}</p>
             </mat-card-content>
           </mat-card>
         </mat-grid-tile>

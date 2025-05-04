@@ -3,6 +3,8 @@ export interface Offer {
     category: string;
     title: string;
     photo: string;
+    memoryCapacity: number,
+    storageSize: number,
     price: string; // type: no calculations are performed
     url: string;
 }
