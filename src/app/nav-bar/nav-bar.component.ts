@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,7 +15,7 @@ import { Subject, takeUntil } from 'rxjs';
    templateUrl: './nav-bar.component.html',
    styleUrl: './nav-bar.component.scss'
  })
- export class NavBarComponent implements OnDestroy {
+ export class NavBarComponent implements OnInit, OnDestroy {
   private destroySubject = new Subject();
   isLoggedIn: boolean = false;
 
@@ -28,6 +28,10 @@ import { Subject, takeUntil } from 'rxjs';
   onLogout(): void {
     this.authService.logout();
     this.router.navigate(['/']);
+  }
+
+  ngOnInit(): void {
+    this.isLoggedIn = this.authService.isAuthenticated();
   }
 
   ngOnDestroy() {
