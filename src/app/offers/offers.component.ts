@@ -72,18 +72,6 @@ export class OffersComponent implements OnInit, OnDestroy {
         })
       }
     );
-    // Set sort selection to query param.
-    this.activatedRoute.queryParams
-      .pipe(takeUntil(this.destroySubject))
-      .subscribe(params => {
-        const selected = params['order'];
-        if (selected && this.sortOptions.find(opt => opt.value === selected)) {
-          this.sortControl.setValue(selected, { emitEvent: false });
-        } else {
-          this.sortControl.setValue('asc');
-        }
-      }
-    );
 
     this.activatedRoute.paramMap
       .pipe(
@@ -99,10 +87,17 @@ export class OffersComponent implements OnInit, OnDestroy {
           page: queryParams.get('page'),
           order: queryParams.get('order')
         })),
-        switchMap(({category, memory, storage, page, order}) => 
-          this.service.getOffers(category || '', memory.map(Number) || [], storage.map(Number) || [], Number(page) || 0, order || '').pipe(
-            map(result => ({category, memory, storage, page, result}))
-          )
+        switchMap(({category, memory, storage, page, order}) => {
+          // Set sort selection to query param.
+          if (order && this.sortOptions.find(opt => opt.value === order)) {
+            this.sortControl.setValue(order, { emitEvent: false });
+          } else {
+            this.sortControl.setValue('asc', { emitEvent: false });
+          }
+
+          return this.service.getOffers(category || '', memory.map(Number) || [], storage.map(Number) || [], Number(page) || 0, order || '')
+            .pipe(map(result => ({category, memory, storage, page, result})))
+        }
         )
       )
       .subscribe(({category, memory, storage, page, result}) => {
