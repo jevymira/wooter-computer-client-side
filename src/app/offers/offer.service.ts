@@ -15,12 +15,14 @@ export class OfferService {
     category: string = '',
     memory: number[] | [],
     storage: number[] | [],
-    page: number = 0
+    page: number = 0,
+    order: string = ''
   ): Observable<Offer[]> {
     let url = `${environment.baseUrl}api/offers`
     let params = new HttpParams()
       .set('category', category)
-      .set('page', page);
+      .set('page', page)
+      .set('sortOrder', order);
 
     if (Array.isArray(memory)) {
       memory.forEach(m => {

@@ -4,7 +4,18 @@
     <app-side-bar (selectedFiltersChanged)="onFiltersChange($event)"></app-side-bar>
   </mat-drawer>
   <mat-drawer-content>
-    <h2>Offers</h2>
+    <div class="flex-container">
+      <h2 class="flex-item">Offers</h2>
+      <mat-form-field class="flex-item">
+          <mat-label>Sort By</mat-label>
+          <!-- Adapted from https://material.angular.dev/components/select/examples#select-reactive-form -->
+          <mat-select [formControl]="sortControl">
+            @for (option of sortOptions; track option) {
+              <mat-option [value]="option.value">{{option.viewValue}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+    </div>
     @if (pagedOffers) {
       <mat-grid-list cols="3">
       @for (offer of pagedOffers; track offer.id) {

@@ -6,6 +6,16 @@ mat-drawer-content {
     max-width: 840px;
 }
 
+.flex-container {
+    display: flex;
+    align-items: center;
+}
+
+mat-form-field {
+    margin-top: 10px;
+    margin-left: auto;
+}
+
 mat-card {
     height: 100%;
     width: 100%;

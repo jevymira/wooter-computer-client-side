@@ -12,11 +12,20 @@ import { SideBarComponent } from '../side-bar/side-bar.component';
 import { OfferService } from './offer.service';
 import { combineLatestWith, map, Subject, switchMap, takeUntil } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-offers',
   imports: [
     RouterLink,
+    ReactiveFormsModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
     MatSidenavModule,
     SideBarComponent,
     MatGridListModule,
@@ -34,6 +43,11 @@ export class OffersComponent implements OnInit, OnDestroy {
   pagedOffers: Offer[] = [];
   length: number = 0;
   pageSize: number = 12;
+  sortOptions = [
+    {value: 'asc', viewValue: 'Lowest Price'},
+    {value: 'desc', viewValue: 'Highest Price'}
+  ];
+  sortControl = new FormControl(this.sortOptions[0].value);
   category: string = '';
   memory: number[] = [];
   storage: number[] = [];
@@ -47,6 +61,30 @@ export class OffersComponent implements OnInit, OnDestroy {
     private service: OfferService) {}
 
   ngOnInit() {
+    // Subscribe to changes in sort selection.
+    this.sortControl.valueChanges
+      .pipe(takeUntil(this.destroySubject))
+      .subscribe(order => {
+        this.router.navigate([], {
+        relativeTo: this.activatedRoute,
+            queryParams: { order },
+            queryParamsHandling: 'merge',
+        })
+      }
+    );
+    // Set sort selection to query param.
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.destroySubject))
+      .subscribe(params => {
+        const selected = params['order'];
+        if (selected && this.sortOptions.find(opt => opt.value === selected)) {
+          this.sortControl.setValue(selected, { emitEvent: false });
+        } else {
+          this.sortControl.setValue('asc');
+        }
+      }
+    );
+
     this.activatedRoute.paramMap
       .pipe(
         takeUntil(this.destroySubject),
@@ -58,10 +96,11 @@ export class OffersComponent implements OnInit, OnDestroy {
           category: params.get('category'),
           memory: queryParams.getAll('memory'),
           storage: queryParams.getAll('storage'),
-          page: queryParams.get('page')
+          page: queryParams.get('page'),
+          order: queryParams.get('order')
         })),
-        switchMap(({category, memory, storage, page}) => 
-          this.service.getOffers(category || '', memory.map(Number) || [], storage.map(Number) || [], Number(page) || 0).pipe(
+        switchMap(({category, memory, storage, page, order}) => 
+          this.service.getOffers(category || '', memory.map(Number) || [], storage.map(Number) || [], Number(page) || 0, order || '').pipe(
             map(result => ({category, memory, storage, page, result}))
           )
         )
