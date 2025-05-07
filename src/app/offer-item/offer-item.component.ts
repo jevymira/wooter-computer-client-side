@@ -9,10 +9,15 @@ import { AuthService } from '../auth/auth.service';
 import { concatMap, EMPTY, Observable, Subject, takeUntil } from 'rxjs';
 import { BookmarksService } from '../bookmarks/bookmarks.service';
 import { Bookmark } from '../bookmarks/bookmark';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-offer-item',
-  imports: [],
+  imports: [
+    MatButtonModule,
+    MatIconModule
+  ],
   templateUrl: './offer-item.component.html',
   styleUrl: './offer-item.component.scss'
 })
@@ -78,6 +83,12 @@ export class OfferItemComponent implements OnInit, OnDestroy {
       this.bookmarkService.delete(this.offer.id)
         .pipe(takeUntil(this.destroySubject))
         .subscribe({next: result => this.isBookmarked = false});
+    }
+  }
+
+  viewOnWoot(): void {
+    if (this.offer) {
+      window.open(this.offer.url, '_blank');
     }
   }
 }
