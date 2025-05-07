@@ -16,6 +16,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { GetOffersRequest } from './get-offers-request';
 
 @Component({
   selector: 'app-offers',
@@ -95,7 +96,14 @@ export class OffersComponent implements OnInit, OnDestroy {
             this.sortControl.setValue('asc', { emitEvent: false });
           }
 
-          return this.service.getOffers(category || '', memory.map(Number) || [], storage.map(Number) || [], Number(page) || 0, order || '')
+          let getOffersRequest = <GetOffersRequest>{
+            category: category || '',
+            memory: memory.map(Number) || [],
+            storage: storage.map(Number) || [],
+            sortOrder: order || ''
+          };
+
+          return this.service.getOffers(getOffersRequest)
             .pipe(map(result => ({category, memory, storage, page, result})))
         }
         )
