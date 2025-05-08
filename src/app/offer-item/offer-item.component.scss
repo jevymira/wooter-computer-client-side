@@ -6,6 +6,7 @@ img, h1, p, .flex-container {
 
 .flex-container {
     display: flex;
+    align-items: center;
 }
 
 .flex-container .flex-item:last-child {

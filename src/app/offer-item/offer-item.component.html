@@ -1,5 +1,7 @@
 @if (offer) {
-  <img src="{{ offer.photo }}">
+  <div class="flex-container">
+    <img src="{{ offer.photo }}">
+  </div>
     <h1>{{ offer.title }}</h1>
     <p><b>RAM Capacity</b> {{ offer.memoryCapacity }} GB</p>
     @if (offer.storageSize < 1000) {
