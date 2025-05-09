@@ -46,9 +46,11 @@ describe('AuthService', () => {
 
   it('should no longer store the token and change auth status to false', () => {
     localStorage.setItem('computer_comparator_jwt', 'mock-token');
+    const removeSpy = spyOn(localStorage, 'removeItem');
 
     service.logout(); // clear token
 
+    expect(removeSpy).toHaveBeenCalledWith('computer_comparator_jwt');
     expect(service.isAuthenticated).toBeFalse;
     const stored = localStorage.getItem('computer_comparator_jwt');
     expect(stored).toBeNull;
