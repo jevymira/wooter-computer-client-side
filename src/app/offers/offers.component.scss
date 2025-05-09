@@ -26,6 +26,13 @@ mat-card img {
     width: 100%;
 }
 
+mat-card-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2; /* Prevent from crowding out specifications. */
+    overflow: hidden;
+}
+
 mat-card-content {
     display: flex;
     align-items: center;
