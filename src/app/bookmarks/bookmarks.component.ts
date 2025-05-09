@@ -19,20 +19,14 @@ import { Subject, takeUntil } from 'rxjs';
 })
 export class BookmarksComponent implements OnInit, OnDestroy {
   private destroySubject = new Subject();
-  isLoggedIn: boolean = false;
   bookmarks: Bookmark[] = [];
 
   constructor(
     private authService: AuthService,
     private service: BookmarksService) {
-    authService.authStatus
-      .pipe(takeUntil(this.destroySubject))
-      .subscribe(result => this.isLoggedIn = result)
   }
 
   ngOnInit(): void {
-    this.isLoggedIn = this.authService.isAuthenticated();
-
     this.service.getBookmarks(null)
       .pipe(takeUntil(this.destroySubject))
       .subscribe({
