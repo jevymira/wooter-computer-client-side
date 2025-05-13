@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { environment } from '../environments/environment.development';
 import { NavBarComponent } from "./nav-bar/nav-bar.component";
 import { RouterOutlet } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-root',
@@ -15,9 +16,11 @@ import { RouterOutlet } from '@angular/router';
 })
 
 export class AppComponent implements OnInit {
-  ngOnInit(): void {
-
+  title = 'Wooter Computer';
+  
+  constructor(private titleService: Title) {
+    this.titleService.setTitle(this.title);
   }
 
-  title = 'client';
+  ngOnInit(): void {}
 }
