@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Offer } from '../offer';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment';
 import { GetOffersRequest } from './get-offers-request';
 
 @Injectable({

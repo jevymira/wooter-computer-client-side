@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Offer } from '../offer';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment.development';
 import { Location } from '@angular/common';
 import { OfferService } from '../offers/offer.service';
 import { AuthService } from '../auth/auth.service';
