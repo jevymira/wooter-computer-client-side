@@ -56,7 +56,6 @@ export class OffersComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
-    private http: HttpClient,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private service: OfferService) {}
@@ -109,6 +108,7 @@ export class OffersComponent implements OnInit, OnDestroy {
         )
       )
       .subscribe(({category, memory, storage, page, result}) => {
+        this.paginator.pageIndex = Number(page) || 0;
         this.offers = result;
         this.paginateOffers(this.paginator.pageIndex);
         this.category = category || '';
@@ -124,12 +124,14 @@ export class OffersComponent implements OnInit, OnDestroy {
   }
 
   // Called when navigated to with, e.g., offer-item-component "Back" button.
+  /*
   ngAfterViewInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
       let page = params['page'] || 0;
       this.paginator.pageIndex = page;
     });
   }
+  */
 
   ngOnDestroy(): void {
     this.destroySubject.next(true);

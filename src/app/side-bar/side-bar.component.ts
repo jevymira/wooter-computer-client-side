@@ -41,7 +41,7 @@ export class SideBarComponent implements OnInit, OnDestroy {
       512: this.formBuilder.control(false),
       1000: this.formBuilder.control(false)
     })
- });
+  });
 
   ngOnInit(): void {
     this.filterForm.valueChanges
@@ -55,12 +55,14 @@ export class SideBarComponent implements OnInit, OnDestroy {
     );
     // queryParams instead of params to clear filter
     // when clicking "Desktops" when already on desktop route
-    this.activatedRoute.queryParams.subscribe(params => {
-      // Clear selections; e.g., when navigating to
-      // "offers/laptops" away from "offers/desktops".
-      this.category = params['category'];
-      this.filterForm.reset(undefined, { emitEvent: false });
-      // undefined: defaults set
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.destroyedSubject))
+      .subscribe(params => {
+        // Clear selections; e.g., when navigating to
+        // "offers/laptops" away from "offers/desktops".
+        this.category = params['category'];
+        this.filterForm.reset(undefined, { emitEvent: false });
+        // undefined: defaults set
     });
   }
 
@@ -74,9 +76,9 @@ export class SideBarComponent implements OnInit, OnDestroy {
             : [params['memory']]
         );
         let storageParams: string[] = (
-        Array.isArray(params['storage'])
-          ? params['storage']   
-          : [params['storage']]
+          Array.isArray(params['storage'])
+            ? params['storage']   
+            : [params['storage']]
         ); 
         // restore selections (e.g., when returning from selected offer page)
         // optional chaining with ? prevents TypeError when form control null/undefined
