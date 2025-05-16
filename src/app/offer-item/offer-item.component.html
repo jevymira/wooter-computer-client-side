@@ -8,7 +8,7 @@
       <p class="storage"><b>Storage Size:</b> {{ offer.storageSize }} GB</p>
     }
     @else {
-      <p class="storage"><b>Storage size:</b> {{ offer.storageSize }} TB</p>
+      <p class="storage"><b>Storage size:</b> {{ offer.storageSize / 1000 }} TB</p>
     }
     <p class="price"><b>Woot! Price:</b> ${{ offer.price }}</p>
  
